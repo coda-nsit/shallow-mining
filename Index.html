@@ -176,12 +176,11 @@
       contentType: "application/json",
       data: req,
       success: function(res) {loadData(res);},
-      error: function(res) {"No server"},
+      error: function(res) {alert("No server")},
       dataType: "json"
     });
   }
   function loadData(res) {
-
     var t = res;
     console.log(t);
     var related = t.related_symptoms;
@@ -212,7 +211,7 @@
       contentType: "application/json",
       data: req,
       success: function(res) {ajaxData(res);},
-      error: function(res) {"No server"},
+      error: function(res) {alert("No server")},
       dataType: "json"
     });
   }
