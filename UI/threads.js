@@ -1,7 +1,7 @@
 /* Section: Fetch Threads,  Author: Rahul */
 var req = 1;
 var LastLoadedRes = null;
-var GetThreadsAPIUrl = "http://52.183.19.216:8080/threads/get-threads/";
+var GetThreadsAPIUrl = "http://localhost:8000/threads/get-threads/";
 
 function getThreads(){
   OnLoad();
@@ -12,7 +12,7 @@ function getThreads(){
     url: url,
     contentType: "application/json",
     data: req,
-    success: function(res) { LastLoadedRes = jQuery.extend(true, {}, res); loadData(res);},
+    success: function(res) { LastLoadedRes = jQuery.extend(true, {}, res); loadData(res); console.log("*****", res)},
     error: function(res) {"No server"},
     dataType: "json"
   });
@@ -21,12 +21,12 @@ function getThreads(){
 
 function loadData(res) {
   var t = res;
-  console.log(t);
+//  console.log(t);
   var related = t.related_symptoms;
-  console.log(related);
+//  console.log(related);
   var i = 1;
   for (var a in related) {
-    console.log(related[a]);
+//    console.log(related[a]);
     if (related[a] == "") {
       continue;
     }
@@ -66,12 +66,12 @@ function ajaxData(res) {
     k++;
   }
   var t = res;
-  console.log(t);
+//  console.log(t);
   var related = t.related_symptoms;
-  console.log(related);
+//  console.log(related);
   var i = 1;
   for (var a in related) {
-    console.log(related[a]);
+//    console.log(related[a]);
     if (related[a] == "") {
       continue;
     }
@@ -118,12 +118,10 @@ function discussionThreads(res) {
       var title = threads[a][i].title;
       var body = threads[a][i].body;
       text += pref + title + midf + body + mipf + k + posf + repf+ k + rtif;
-      console.log(title);
-      console.log(body);
       var replies = threads[a][i].replies;
 
       for (var j in replies) {
-        console.log(replies[j]);
+//        console.log(replies[j]);
         text += rprf + title + rmif + replies[j] + rpof;
       }
       text += rcdf;
@@ -140,6 +138,7 @@ function discussionThreads(res) {
 
 
 function FilterByTypeAndLoadDiscussionThreads(resJSON){
+
   var t1="no", t2="no";
   var radios = document.getElementsByName('DiabetesType');
  //find filters selected
@@ -149,7 +148,7 @@ function FilterByTypeAndLoadDiscussionThreads(resJSON){
  {
    if(radios[i].value == "t1")
    {
-     t1="yes"; 
+     t1="yes";
    }
    else if(radios[i].value == "t2")
    {
@@ -157,7 +156,7 @@ function FilterByTypeAndLoadDiscussionThreads(resJSON){
    }
    else if(radios[i].value == "tBoth")
    {
-     t1="yes"; 
+     t1="yes";
      t2="yes";
    }
  }
@@ -193,6 +192,7 @@ function FilterByTypeAndLoadDiscussionThreads(resJSON){
  discussionThreads(resJSON);
 }
 
+
 function onFilterSelected() {
   var resJSON = jQuery.extend(true, {}, LastLoadedRes);
   FilterByTypeAndLoadDiscussionThreads(resJSON);
@@ -200,11 +200,14 @@ function onFilterSelected() {
 
 function HighLightRelatedSymptoms(resJSON){
   var HTMLReplaced = "";
-  for(i=0;i<resJSON.related_symptoms.length-1;i++)
+  for(i=0;i<=resJSON.related_symptoms.length-1;i++)
   {
     var Symptom = resJSON.related_symptoms[i];
+    if(Symptom == "") {
+        continue;
+    }
     var SpanSymptom = ("<span class='"+$('#s'+(i+1)).attr('class')+"'>"+Symptom+"</span>");
-    console.log("Span elem:" + SpanSymptom);
+//    console.log("Span elem:" + SpanSymptom);
     HTMLReplaced = $(".inbox-chat-col").html().replace(new RegExp(Symptom,"g"), SpanSymptom ); //"<span class='"+$('#s'+i).attr('class')+"'>"+Symptom+"</span>" //"<span class='badge badge-success' >low blood sugar</span>"
     $(".inbox-chat-col").html(HTMLReplaced);
   }
@@ -214,9 +217,9 @@ function HighLightRelatedSymptoms(resJSON){
 
 function escapeRegExp(string) {
   var str = string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'); // $& means the whole matched string
-  console.log("-------");
-  console.log(str);
-  console.log("----------");
+//  console.log("-------");
+//  console.log(str);
+//  console.log("----------");
   return str;
 }
 //$(".inbox-chat-col").html( $(".inbox-chat-col").html().replace(/a/g, "Hello2") )
@@ -236,5 +239,10 @@ if(t!=0){
 var radioBut = document.getElementById(t);
 radioBut.checked = true;
 }
+}
+
+function gotoIndex(loc) {
+    console.log("*****");
+    window.location.href = loc;
 }
 
