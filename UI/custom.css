@@ -76,9 +76,18 @@
 }
 
 .sym-text{
-    font-size: 20pt;
+    font-size: 15pt;
 }
 
 .inbox_chat {
     max-height: 750px;
+}
+
+/* Rishab styles */
+.black-background {
+    background-color: black;
+}
+
+.white-text {
+    color: white;
 }

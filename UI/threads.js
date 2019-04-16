@@ -2,6 +2,7 @@
 var req = 1;
 var LastLoadedRes = null;
 var GetThreadsAPIUrl = "http://localhost:8000/threads/get-threads/";
+var s = "";
 
 function getThreads(){
   OnLoad();
@@ -44,6 +45,7 @@ function loadData(res) {
 
 function searchThreads(str){
   var url = GetThreadsAPIUrl;
+  s = str;
   var req = '{"symptom":"'+str+'"}';
   $.ajax({
     type: "POST",
@@ -78,6 +80,10 @@ function ajaxData(res) {
     $('#l'+i).show();
     $('#s'+i).show();
     $('#s'+i).text(related[a]);
+    if (related[a] == s) {
+        $('#l'+i).hide();
+        $('#s'+i).hide();
+    }
     i++;
   }
   if (i >= 2) {
@@ -96,7 +102,7 @@ function discussionThreads(res) {
   var text = "";
   var pref = '<div class="chat_list active_chat"><div class="chat_people"><div class="chat_ib"><span class="th-title">';
   var midf = '</span><p class="post-message">';
-  var mipf = '</p><button type="button" class="readmore-btn btn btn-primary" data-toggle="collapse" data-target="#t';
+  var mipf = '</p><button type="button" class="readmore-btn btn btn-lg btn-primary" data-toggle="collapse" data-target="#t';
   var posf = '">+See Thread</button></div></div></div>';
 
   var repf = '<div id="t';
@@ -200,16 +206,16 @@ function onFilterSelected() {
 
 function HighLightRelatedSymptoms(resJSON){
   var HTMLReplaced = "";
-  for(i=0;i<=resJSON.related_symptoms.length-1;i++)
+  for(i=1;i<=resJSON.related_symptoms.length-1;i++)
   {
-    var Symptom = resJSON.related_symptoms[i];
-    if(Symptom == "") {
-        continue;
-    }
-    var SpanSymptom = ("<span class='"+$('#s'+(i+1)).attr('class')+"'>"+Symptom+"</span>");
+    var Symptom = resJSON.related_symptoms[i].toLowerCase();
+//    if(Symptom == "") {
+//        continue;
+//    }
+    var SpanSymptom = ("<span class='"+$('#s'+(i)).attr('class')+"'>"+Symptom+"</span>");
 //    console.log("Span elem:" + SpanSymptom);
-    HTMLReplaced = $(".inbox-chat-col").html().replace(new RegExp(Symptom,"g"), SpanSymptom ); //"<span class='"+$('#s'+i).attr('class')+"'>"+Symptom+"</span>" //"<span class='badge badge-success' >low blood sugar</span>"
-    $(".inbox-chat-col").html(HTMLReplaced);
+    HTMLReplaced = $(".inbox_chat").html().toLowerCase().replace(new RegExp(Symptom,"g"), SpanSymptom ); //"<span class='"+$('#s'+i).attr('class')+"'>"+Symptom+"</span>" //"<span class='badge badge-success' >low blood sugar</span>"
+    $(".inbox_chat").html(HTMLReplaced);
   }
  
 }
