@@ -62,7 +62,7 @@ def getRelatedSymptoms(symptom=None):
     finalCount = list()
     for i in range(0,len(syms)):
         count = list()
-        for j in range(0,len(lines)):
+        for j in range(0, len(lines)):
             if syms[i] in lines[j]:
                 count.append(1)
             else:
@@ -115,7 +115,6 @@ class GetThreads(APIView):
         data = {
             "related_symptoms": relatedSymptoms
         }
-
 
         if querySymptom not in relatedSymptoms:
             relatedSymptoms.insert(0, querySymptom)
