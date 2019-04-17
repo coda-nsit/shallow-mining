@@ -43,7 +43,49 @@ function loadData(res) {
 }
 
 
+function GetRefinedSearchWord(searchedsym)
+{
+
+sym = searchedsym.toLowerCase();
+if(sym.length>2)
+{
+//["Weight loss", "nause", "Frequent urination", "Fatigue", "tiredness", "itchy skin", "dry mouth", "Infections", "Excessive thirst", "Tingling", "Dry Skin","Extreme hunger", "numbness hands", "Blurry vision", "Sudden vision changes", "vomitting", "numbness feet","Sores"]
+    var AllSyms = ["Weight loss", "nause", "Frequent urination", "Fatigue", "tiredness", "itchy skin", "dry mouth", "Infections", "Excessive thirst", "Tingling", "Dry Skin","Extreme hunger", "numbness hands", "Blurry vision", "Sudden vision changes", "vomitting", "numbness feet","Sores"];
+    for(i=0;i<AllSyms.length;i++)
+    {
+        if(AllSyms[i][0].toLowerCase()==sym[0] && AllSyms[i][1].toLowerCase()==sym[1] && AllSyms[i][2].toLowerCase()==sym[2])
+        {
+            return AllSyms[i];
+        }
+    }
+
+    for(i=0;i<AllSyms.length;i++)
+    {
+      if(AllSyms[i].toLowerCase().includes(sym))
+      {
+        return AllSyms[i];
+      }
+    }
+
+    for(i=0;i<AllSyms.length;i++)
+    {
+      if(AllSyms[i].toLowerCase().includes(sym.substring(0,3)))
+      {
+        return AllSyms[i];
+      }
+    }
+
+}
+//fallback
+
+
+return searchedsym;
+}
+
 function searchThreads(str){
+var str2 = str;
+  str = GetRefinedSearchWord(str);
+  console.log("shzjdsu"+str);
   var url = GetThreadsAPIUrl;
   s = str;
   var req = '{"symptom":"'+str+'"}';
@@ -52,7 +94,7 @@ function searchThreads(str){
     url: url,
     contentType: "application/json",
     data: req,
-    success: function(res) { LastLoadedRes = jQuery.extend(true, {}, res); ajaxData(res);},
+    success: function(res) { LastLoadedRes = jQuery.extend(true, {}, res); ajaxData(res); $("#results").show(); $("#q").text(str2);},
     error: function(res) {"No server"},
     dataType: "json"
   });
@@ -137,6 +179,16 @@ function discussionThreads(res) {
   document.getElementById('loader').innerHTML = text;
   document.getElementById('loader').style.display = "block";
 
+  //No results
+  /*
+  if(res.related_symptoms.length==1)
+  {
+  if(res.threads[res.related_symptoms[0]].length==0)
+  {
+  $(".chat_inbox").text("No Threads Found");
+  }
+  }
+  */
   HighLightRelatedSymptoms(res);
 }
 
