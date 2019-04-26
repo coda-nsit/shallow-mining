@@ -1,11 +1,6 @@
 echo "***** this script sets up the project on home of the user who runs it ie. on ~ *****"
-# clone seatr into current home
-cd ~
-git clone https://github.com/coda-nsit/shallow-mining.git
-cd shallow-mining
-
 # upgrade pip
-pip3 install --upgrade pip
+pip3 install --user --upgrade pip
 
 # install virtualenv
 pip3 install venv
@@ -16,7 +11,7 @@ virtualenv venv
 # set the python interpreter
 virtualenv -p /usr/bin/python3 venv
 
-# activate the venv-seatr
+# activate the venv
 source venv/bin/activate
 
 # install all pip dependencies
