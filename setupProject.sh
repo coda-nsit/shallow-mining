@@ -1,6 +1,6 @@
 echo "***** this script sets up the project on home of the user who runs it ie. on ~ *****"
 # upgrade pip
-pip3 install --upgrade pip
+pip3 install --user --upgrade pip
 
 # install virtualenv
 pip3 install virtualenv
