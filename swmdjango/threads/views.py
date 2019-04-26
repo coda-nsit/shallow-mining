@@ -8,57 +8,57 @@ import json
 import pandas
 import numpy
 import csv
+import os
+import nltk
+
+
+dirname = os.path.dirname(__file__)
+
+
+def getFileName(filename):
+    return os.path.abspath(os.path.join(dirname, '../..', 'data/' + filename))
 
 
 def getRelatedSymptoms(symptom=None):
-    with open('threads/diabetes_30pages.json', 'r') as f:
-         data = json.load(f)
-         # print (data)
+    ############################### comment till here if symSym.txt exists
+    filename = getFileName('diabetes_30pages.json')
+    with open(filename, 'r') as f:
+        data = json.load(f)
 
-    with open('threads/diabetes_replies.json', 'r') as f1:
+    filename = getFileName('diabetes_replies.json')
+    with open(filename, 'r') as f1:
         replies = json.load(f1)
 
-    file = open("myfile.txt", "w")
-    reply = ""
-    datastring = ""
     replyText = " "
     for i in range (0, len(data)):
         try:
-            # print(data[i]['symptom'])
-            datastring = (str(data[i]['title']).strip("[]").strip("''") +" "+ str(data[i]['tags']).strip("[]").strip("''")+ " " +str(data[i]['threadBody']).strip("[]").strip("''"))
+            datastring = (str(data[i]['title']).strip("[]").strip("''") + " " + str(data[i]['tags']).strip("[]").strip("''")+ " " +str(data[i]['threadBody']).strip("[]").strip("''"))
             id = str(data[i]['title']).strip("[]").strip("''")
 
             for j in range (0, len(replies)):
                 try:
                     reply = (str(replies[j]['threadId']).strip("[]").strip("''") )
 
-                    # print (reply)
-                    # print (id)
                     if  reply == id:
                           replyText = replyText + " " + (str(replies[j]['replyText']).strip("[]").strip("''"))
                 except:
                     continue
 
             file.write(datastring + "" + replyText + "\n")
-            # print( datastring + "" + replyText)
 
         except:
             continue
 
-    symptomFile = open("threads/symptoms.txt")
+    filename = getFileName('symptoms.txt')
+    symptomFile = open(filename)
     lines = symptomFile.readlines()
     syms = []
     for line in lines:
         syms.append(line[:-1])
-        # for word in line.split():
-        #     syms.append(word)
 
-    # print(syms)
-
-    length= len(syms)
+    length = len(syms)
     fh = open("myfile.txt")
     lines = fh.readlines()
-    # print(lines)
     finalCount = list()
     for i in range(0,len(syms)):
         count = list()
@@ -70,11 +70,9 @@ def getRelatedSymptoms(symptom=None):
         finalCount.append(count)
 
     symEnc = numpy.array(finalCount)
-    # print(symEnc)
     encSym = numpy.transpose(symEnc)
 
     symSym = numpy.matmul(symEnc,encSym)
-    # print(symSym)
 
     I = pandas.Index(syms, name="rows")
     C = pandas.Index(syms, name="columns")
@@ -85,7 +83,10 @@ def getRelatedSymptoms(symptom=None):
         df = df.sort_values(by = syms[i], axis=1,ascending= False)
         file1.write(syms[i] + str(df.columns.values.tolist()) + "\n")
     df.to_csv("symSym.csv")
-    with open('symSym.csv') as csv_file:
+    ############################### comment till here if symSym.txt exists
+
+    filename = getFileName('symSym.csv')
+    with open(filename) as csv_file:
         csv_reader = csv.reader(csv_file, delimiter=',')
         allSymptoms = []
         relatedSymptoms = []
@@ -95,7 +96,7 @@ def getRelatedSymptoms(symptom=None):
 
             if i1 == 0:
                 allSymptoms = row
-            if row[0] == symptom:
+            if row[0] == symptom or nltk.edit_distance(row[0], symptom) < 10:
                 for i2, r in enumerate(row):
                     if r != '0' and i2 != 0:
                         relatedSymptoms.append(allSymptoms[i2])
@@ -104,8 +105,7 @@ def getRelatedSymptoms(symptom=None):
 
 class GetThreads(APIView):
     def post(self, request, format=None):
-        querySymptom    = request.data.get('symptom')
-
+        querySymptom = request.data.get('symptom')
 
         relatedSymptoms = getRelatedSymptoms(querySymptom)
 
@@ -120,7 +120,8 @@ class GetThreads(APIView):
             relatedSymptoms.insert(0, querySymptom)
 
         # parse the diabetes_threads.json
-        f1 = open('threads/threadsRepliesMerged.json')
+        filename = getFileName("threadsRepliesMerged.json")
+        f1 = open(filename)
 
         threadsData = json.load(f1)
 
