@@ -1,6 +1,9 @@
 # swm-backend
 shallow-medical-record-mining
 
+
+# setup
+## after cloning this repo, run the following commands
 ### this installs python3 and pip3, if you don't want to run the script as sudo, manually install these
 1. sudo ./installDependencies.sh
 
